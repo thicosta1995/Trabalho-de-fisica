@@ -48,13 +48,34 @@ public:
 		b2FixtureDef ft;
 		ft.shape = &shape3;
 		teto->CreateFixture(&ft);
-
+		CreateCircle(1.0f,1.0f,b2Vec2(10.0,2.0));
 
 
 
 
 	}
+	void CreateCircle(float density, int radius, b2Vec2 position)
+	{
+		b2Body* circleObj;
+		b2BodyDef ba;
 
+		ba.type = b2_dynamicBody;
+		ba.position = position;
+		
+		circleObj = m_world->CreateBody(&ba);
+		circleObj->SetGravityScale(-1);
+		b2CircleShape circle;
+		circle.m_radius = radius;
+		
+		b2FixtureDef fd;
+		fd.shape = &circle;
+
+		fd.density = density;
+		fd.restitution = 0.0f;
+
+		circleObj->CreateFixture(&fd);
+
+	}
 	void Step(Settings& settings) override
 	{
 		//Chama o passo da simula��o e o algoritmo de rendering
