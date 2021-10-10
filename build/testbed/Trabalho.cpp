@@ -5,6 +5,53 @@ class Trabalho : public Test //voc� cria a sua classe derivada da classe base 
 public:
 	Trabalho() {
 		// Aqui no construtor voc� inicializa a cena
+		b2BodyDef bd;
+		bd.position.Set(-40, 0);
+		parede = m_world->CreateBody(&bd);
+
+		b2EdgeShape shape;
+		shape.SetTwoSided(b2Vec2(0.0f,40.0f), b2Vec2(0.0f, 0.0f));
+
+		b2FixtureDef fd;
+		fd.shape = &shape;
+		parede->CreateFixture(&fd);
+
+		b2BodyDef bq;
+		bq.position.Set(30, 0);
+		parede1 = m_world->CreateBody(&bq);
+
+		b2EdgeShape shape1;
+		shape1.SetTwoSided(b2Vec2(0.0f, 40.0f), b2Vec2(0.0f, 0.0f));
+
+		b2FixtureDef fq;
+		fq.shape = &shape1;
+		parede1->CreateFixture(&fq);
+
+		b2BodyDef bb;
+		bb.position.Set(-40, -0);
+		chao = m_world->CreateBody(&bb);
+
+		b2EdgeShape shape2;
+		shape2.SetTwoSided(b2Vec2(70.0f, 0.0f), b2Vec2(0.0f, 0.0f));
+
+		b2FixtureDef fb;
+		fb.shape = &shape2;
+		chao->CreateFixture(&fb);
+
+		b2BodyDef bt;
+		bt.position.Set(-40, 40);
+		teto = m_world->CreateBody(&bt);
+
+		b2EdgeShape shape3;
+		shape3.SetTwoSided(b2Vec2(70.0f, 0.0f), b2Vec2(0.0f, 0.0f));
+
+		b2FixtureDef ft;
+		ft.shape = &shape3;
+		teto->CreateFixture(&ft);
+
+
+
+
 
 	}
 
@@ -24,7 +71,12 @@ public:
 	{
 		return new Trabalho;
 	}
+
+	b2Body* parede;
+	b2Body* chao;
+	b2Body* parede1;
+	b2Body* teto;
 };
 
 //Aqui fazemos o registro do novo teste 
-static int testIndex = RegisterTest("Examples", "MyTest", Trabalho::Create);
+static int testIndex = RegisterTest("Examples", "Trabalho", Trabalho::Create);
