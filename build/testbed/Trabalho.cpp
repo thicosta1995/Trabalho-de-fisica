@@ -48,13 +48,17 @@ public:
 		b2FixtureDef ft;
 		ft.shape = &shape3;
 		teto->CreateFixture(&ft);
-		CreateCircle(1.0f,1.0f,b2Vec2(10.0,2.0));
-
-
-
-
+		CreateCircle(1.0f,1.0f,b2Vec2(10.0,2.0),-1);
+		CreateCircle(0.1, 1, b2Vec2(0.0, 30.0), 0);
+		CreateCircle(0.1, 1, b2Vec2(1.0, 30.0), 0);
+		CreateCircle(0.1, 1, b2Vec2(2.0, 30.0), 0);
+		CreateCircle(0.1, 1, b2Vec2(3.0, 30.0), 0);
+		CreateCircle(0.1, 1, b2Vec2(0.0, 32.0), 0);
+		CreateCircle(0.1, 1, b2Vec2(1.0, 32.0), 0);
+		CreateCircle(0.1 , 1, b2Vec2(2.0, 32.0), 0);
+		CreateCircle(0.1, 1, b2Vec2(0, 34.0), 0);
 	}
-	void CreateCircle(float density, int radius, b2Vec2 position)
+	void CreateCircle(float density, int radius, b2Vec2 position,float gravidade)
 	{
 		b2Body* circleObj;
 		b2BodyDef ba;
@@ -63,7 +67,7 @@ public:
 		ba.position = position;
 		
 		circleObj = m_world->CreateBody(&ba);
-		circleObj->SetGravityScale(-1);
+		circleObj->SetGravityScale(gravidade);
 		b2CircleShape circle;
 		circle.m_radius = radius;
 
@@ -99,7 +103,7 @@ public:
 	b2Body* chao;
 	b2Body* parede1;
 	b2Body* teto;
-	b2CircleShape circle;
+	
 };
 
 //Aqui fazemos o registro do novo teste 
