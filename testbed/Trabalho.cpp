@@ -71,7 +71,7 @@ public:
 		fd.shape = &circle;
 
 		fd.density = density;
-		fd.restitution = 0.0f;
+		fd.restitution = 1.0f;
 
 		circleObj->CreateFixture(&fd);
 
@@ -136,6 +136,29 @@ public:
 		{
 			ballBody->SetTransform(ballBody->GetWorldCenter(), ballAngle);
 			ballAngle += 0.05;
+
+
+			if (glfwGetKey(g_mainWindow, GLFW_KEY_D) == GLFW_RELEASE)
+			{
+				b2Vec2 v = ballBody->GetLinearVelocity();
+				ballBody->SetLinearVelocity(b2Vec2(0, v.y));
+			}
+			if (glfwGetKey(g_mainWindow, GLFW_KEY_A) == GLFW_PRESS)
+			{
+				b2Vec2 v = ballBody->GetLinearVelocity();
+				ballBody->SetLinearVelocity(b2Vec2(-20, v.y));
+
+			}
+			if (glfwGetKey(g_mainWindow, GLFW_KEY_A) == GLFW_RELEASE)
+			{
+				b2Vec2 v = ballBody->GetLinearVelocity();
+				ballBody->SetLinearVelocity(b2Vec2(0, v.y));
+			}
+			if (glfwGetKey(g_mainWindow, GLFW_KEY_D) == GLFW_PRESS)
+			{
+				b2Vec2 v = ballBody->GetLinearVelocity();
+				ballBody->SetLinearVelocity(b2Vec2(20, v.y));
+			}
 		}
 		else if (gameState == 1)
 		{
