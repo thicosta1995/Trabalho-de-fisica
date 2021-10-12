@@ -120,15 +120,22 @@ public:
 		//Chama o passo da simula��o e o algoritmo de rendering
 		Test::Step(settings);
 
-		/*if (glfwGetKey(g_mainWindow, GLFW_KEY_W) == GLFW_PRESS)
+		if (glfwGetKey(g_mainWindow, GLFW_KEY_SPACE) == GLFW_PRESS)
 		{
-		}*/
-
-		std::cout << pinos.size() << std::endl;
+			if (gameState == 0)
+			{
+				gameState = 1;
+			}
+			if (gameState == 1)
+			{
+				gameState = 2;
+			}
+		}
 
 		if (gameState == 0)
 		{
-			//ROTAÇÃO
+			ballBody->SetTransform(ballBody->GetWorldCenter(), ballAngle);
+			ballAngle += 0.05;
 		}
 		else if (gameState == 1)
 		{
@@ -165,8 +172,7 @@ public:
 	std::list<b2Body*> pinos;
 
 	b2BodyDef ballBodyDef;
-	b2Body* ballBody;
-
+	b2Body* ballBody; 
 	b2Body* parede;
 	b2Body* chao;
 	b2Body* parede1;
