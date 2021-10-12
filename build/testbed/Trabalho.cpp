@@ -57,6 +57,9 @@ public:
 		CreateCircle(0.1, 1, b2Vec2(1.0, 32.0), 0);
 		CreateCircle(0.1 , 1, b2Vec2(2.0, 32.0), 0);
 		CreateCircle(0.1, 1, b2Vec2(0, 34.0), 0);
+
+		CreateObstaculos(b2Vec2(10, 20), b2Vec2(10, 12), b2Vec2(0.0, 0.0));
+		CreateObstaculos(b2Vec2(-10, 20), b2Vec2(-10, 12), b2Vec2(0.0, 0.0));
 	}
 	void CreateCircle(float density, int radius, b2Vec2 position,float gravidade)
 	{
@@ -82,6 +85,22 @@ public:
 		circleObj->CreateFixture(&fd);
 
 	}
+
+	void CreateObstaculos(b2Vec2 position, b2Vec2 pontoIncical, b2Vec2 pontoFinal)
+	{
+		b2Body* obstaculos;
+		b2BodyDef bf;
+		bf.position = position;
+		obstaculos = m_world->CreateBody(&bf);
+
+		b2EdgeShape shape;
+		shape.SetTwoSided(pontoIncical,pontoFinal);
+
+
+		b2FixtureDef fd;
+		fd.shape = &shape;
+		obstaculos->CreateFixture(&fd);
+	}
 	void Step(Settings& settings) override
 	{
 		//Chama o passo da simula��o e o algoritmo de rendering
@@ -103,6 +122,7 @@ public:
 	b2Body* chao;
 	b2Body* parede1;
 	b2Body* teto;
+	
 	
 };
 
