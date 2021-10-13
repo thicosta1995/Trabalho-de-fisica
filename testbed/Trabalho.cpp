@@ -1,6 +1,8 @@
 ﻿#include "test.h"
 #include <iostream>
 #include <list>
+#include <Windows.h>
+#include "imgui/imgui.h"
 
 class Trabalho : public Test //voc� cria a sua classe derivada da classe base Test
 {
@@ -71,7 +73,7 @@ public:
 		fd.shape = &circle;
 
 		fd.density = density;
-		fd.restitution = 1.0f;
+		fd.restitution = 0.5f;
 
 		circleObj->CreateFixture(&fd);
 
@@ -120,23 +122,22 @@ public:
 		//Chama o passo da simula��o e o algoritmo de rendering
 		Test::Step(settings);
 
-		if (glfwGetKey(g_mainWindow, GLFW_KEY_SPACE) == GLFW_PRESS)
-		{
-			if (gameState == 0)
-			{
-				gameState = 1;
-			}
-			if (gameState == 1)
-			{
-				gameState = 2;
-			}
-		}
-
 		if (gameState == 0)
 		{
 			ballBody->SetTransform(ballBody->GetWorldCenter(), ballAngle);
 			ballAngle += 0.05;
 
+			if (glfwGetKey(g_mainWindow, GLFW_KEY_SPACE) == GLFW_PRESS)
+			{
+				if (gameState == 0)
+				{
+					gameState = 1;
+				}
+				if (gameState == 1)
+				{
+					gameState = 2;
+				}
+			}
 
 			if (glfwGetKey(g_mainWindow, GLFW_KEY_D) == GLFW_RELEASE)
 			{
@@ -147,7 +148,6 @@ public:
 			{
 				b2Vec2 v = ballBody->GetLinearVelocity();
 				ballBody->SetLinearVelocity(b2Vec2(-20, v.y));
-
 			}
 			if (glfwGetKey(g_mainWindow, GLFW_KEY_A) == GLFW_RELEASE)
 			{
@@ -159,14 +159,23 @@ public:
 				b2Vec2 v = ballBody->GetLinearVelocity();
 				ballBody->SetLinearVelocity(b2Vec2(20, v.y));
 			}
+
 		}
 		else if (gameState == 1)
 		{
-			//FORÇA
+			if (glfwGetKey(g_mainWindow, GLFW_KEY_SPACE) == GLFW_PRESS)
+			{
+				force += 10;
+			}
+			if (glfwGetKey(g_mainWindow, GLFW_KEY_SPACE) == GLFW_RELEASE)
+			{
+				b2Vec2 f = b2Vec2(ballBody->GetWorldVector(b2Vec2(0, force)));
+				ballBody->ApplyForceToCenter(f, true);
+			}
 		}
 		else if (gameState == 2)
 		{
-			//NADA
+			
 		}
 		else if (gameState == 3)
 		{
@@ -181,6 +190,26 @@ public:
 		m_textLine += 15;
 	}
 
+	void UpdateUI() override
+	{
+		ImGui::SetNextWindowPos(ImVec2(10.0f, 100.0f));
+		ImGui::SetNextWindowSize(ImVec2(260.0f, 90.0f));
+		ImGui::Begin("Ball Informations", nullptr, ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoResize);
+
+		if (ImGui::SliderFloat("FORCE", &force, 0.0f, 20.0f, "%.0f"))
+		{
+			force = m_joint->SetLength(force);
+		}
+
+		if (ImGui::SliderFloat("ROTATION", &rotation, 0.0f, 10.0f, "%.1f"))
+		{
+			rotation = m_joint->SetLength(rotation);
+
+		}
+
+		ImGui::End();
+	}
+
 	static Test* Create()  //a classe Test que instancia um objeto da sua nova classe
 						   //o autor da Box2D usa um padr�o de projeto chamado Factory
 						   //para sua arquitetura de classes
@@ -189,10 +218,12 @@ public:
 	}
 
 	float gameState = 0; // 0 - Selecao de Rotação || 1 - Selecao de força || 2 - Aguardando finalizar rodada || 3 - Remontar mapa
-
 	float ballAngle = 0;
 
 	std::list<b2Body*> pinos;
+
+	time_t timer;
+	time_t startTimer;
 
 	b2BodyDef ballBodyDef;
 	b2Body* ballBody; 
@@ -200,6 +231,11 @@ public:
 	b2Body* chao;
 	b2Body* parede1;
 	b2Body* teto;	
+
+	b2DistanceJoint* m_joint;
+
+	float rotation = 0;
+	float force = 0;
 };
 
 //Aqui fazemos o registro do novo teste 
