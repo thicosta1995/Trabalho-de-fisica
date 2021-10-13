@@ -96,7 +96,7 @@ public:
 		fd.shape = &circle;
 
 		fd.density = density;
-		fd.restitution = 0.0f;
+		fd.restitution = 0.5f;
 
 		ballBody->CreateFixture(&fd);
 	}
@@ -212,7 +212,6 @@ public:
 		if (ImGui::SliderFloat("ROTATION", &rotation, 0.0f, 10.0f, "%.1f"))
 		{
 			rotation = m_joint->SetLength(rotation);
-
 		}
 
 		ImGui::End();
