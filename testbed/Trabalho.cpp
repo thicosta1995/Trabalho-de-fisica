@@ -3,6 +3,7 @@
 #include <vector>
 #include <Windows.h>
 #include "imgui/imgui.h"
+#include <chrono>
 
 class Trabalho : public Test //voc� cria a sua classe derivada da classe base Test
 {
@@ -37,6 +38,29 @@ public:
 		CreateCircle(0.1, 1, b2Vec2(-4.0, 26.0), 0);
 		//4 fila
 		CreateCircle(0.1, 1, b2Vec2(-5.5, 23.0), 0);
+		//
+		pinosPos.push_back(b2Vec2(-5.5, 23.0));
+		pinosPos.push_back(b2Vec2(-4.0, 26.0));
+		pinosPos.push_back(b2Vec2(-7.0, 26.0));
+		pinosPos.push_back(b2Vec2(-2.5, 29.0));
+		pinosPos.push_back(b2Vec2(-5.5, 29.0));
+		pinosPos.push_back(b2Vec2(-8.5, 29.0));
+		pinosPos.push_back(b2Vec2(-1.0, 32.0));
+		pinosPos.push_back(b2Vec2(-4.0, 32.0));
+		pinosPos.push_back(b2Vec2(-7.0, 32.0));
+		pinosPos.push_back(b2Vec2(-10.0, 32.0));
+
+		pinoStatus.push_back(false);
+		pinoStatus.push_back(false);
+		pinoStatus.push_back(false);
+		pinoStatus.push_back(false);
+		pinoStatus.push_back(false);
+		pinoStatus.push_back(false);
+		pinoStatus.push_back(false);
+		pinoStatus.push_back(false);
+		pinoStatus.push_back(false);
+		pinoStatus.push_back(false);
+
 		//obstaculos
 		CreateObstaculos(b2Vec2(10, 20), b2Vec2(10, 12), b2Vec2(0.0, 0.0));
 		CreateObstaculos(b2Vec2(-15, 20), b2Vec2(-10, 12), b2Vec2(0.0, 0.0));
@@ -136,8 +160,6 @@ public:
 		b2FixtureDef fd;
 		fd.shape = &shape;
 		obstaculos->CreateFixture(&fd);
-
-
 	}
 
 	void BeginContact(b2Contact* contact) override
@@ -151,10 +173,17 @@ public:
 			{
 				if (fixtureA == targetAreaFd || fixtureB == targetAreaFd)
 				{
+					pinoStatus[i] = true;
 					std::cout << "COLIDIU";
-					pinos.pop_back();
-					pinosfd.pop_back();
+					balls--;
+
+					
 					points++;
+
+					if (points == 10)
+					{
+						//FIM DE FASE
+					}
 				}
 			}
 		}
@@ -226,13 +255,37 @@ public:
 		}
 		else if (gameState == 2)
 		{
-		
+			timer++;
+
+			if (timer == 500)
+			{
+				gameState = 3;
+			}
 		}
 		else if (gameState == 3)
 		{
-			//DESTRUIR TUDO PARA RESTARTAR LEVEL
-			CreateBall(1.0f, 1.0f, b2Vec2(-5.5, 2.0), 0);
-			CreateMap();
+			for (int i = 0; i < pinos.size(); i++)
+			{
+				if (pinoStatus[i] == false)
+				{
+					pinos[i]->SetTransform(pinosPos[i], 0);
+					pinos[i]->SetLinearVelocity(b2Vec2(0, 0));
+					pinos[i]->SetAngularVelocity(0);
+				}
+			}
+
+			ballBody->SetTransform(b2Vec2(-5.5, 2.0), 0);
+			ballBody->SetLinearVelocity(b2Vec2(0, 0));
+			ballBody->SetAngularVelocity(0);
+			
+			if (plays > 1)
+			{
+				plays--;
+			}
+			else
+			{
+				//GAME OVER
+			}
 			gameState = 0;
 		}
 
@@ -241,10 +294,11 @@ public:
 		m_textLine += 15;
 	}
 
+	
 	void UpdateUI() override
 	{
 		ImGui::SetNextWindowPos(ImVec2(10.0f, 100.0f));
-		ImGui::SetNextWindowSize(ImVec2(260.0f, 100.0f));
+		ImGui::SetNextWindowSize(ImVec2(260.0f, 120.0f));
 		ImGui::Begin("Ball Informations", nullptr, ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoResize);
 
 		if (ImGui::SliderFloat("FORCE", &force, 1000, 5000, "%.0f"))
@@ -262,6 +316,11 @@ public:
 			points = m_joint->SetLength(points);
 		}
 
+		if (ImGui::SliderFloat("PLAYS", &plays, 1, 3, "%.0f"))
+		{
+			plays = m_joint->SetLength(plays);
+		}
+
 		ImGui::End();
 	}
 
@@ -277,10 +336,10 @@ public:
 
 	std::vector<b2Body*> pinos;
 	std::vector<b2Fixture*> pinosfd;
+	std::vector<b2Vec2> pinosPos;
+	std::vector<bool> pinoStatus;
 
-
-	time_t timer;
-	time_t startTimer;
+	float timer = 0;
 
 	b2BodyDef ballBodyDef;
 	b2Body* ballBody; 
@@ -299,6 +358,8 @@ public:
 	float rotation = 0;
 	float force = 1000;
 	float points = 0;
+	float balls = 10;
+	float plays = 3;
 };
 
 //Aqui fazemos o registro do novo teste 
