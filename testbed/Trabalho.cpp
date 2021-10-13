@@ -19,7 +19,9 @@ public:
 		parede = CreateWall(b2Vec2(0.0f, 40.0f), -40, 0);
 		parede1 = CreateWall(b2Vec2(0.0f, 40.0f), 30, 0);
 		chao = CreateWall(b2Vec2(70.0f, 0.0f), -40, 0);
-		teto = CreateWall(b2Vec2(70.0f, 0.0f), -40, 40);
+
+		targetArea = CreateBox(-35, 5, b2Vec2(-5.0f, 45.0f));
+
 		//PINOS
 		//1 fila
 		CreateCircle(0.1, 1, b2Vec2(-10.0, 32.0), 0);
@@ -53,6 +55,24 @@ public:
 		b2FixtureDef fd;
 		fd.shape = &shape;
 		body->CreateFixture(&fd);
+		return body;
+	}
+
+	b2Body* CreateBox(float height, float width, b2Vec2 position)
+	{
+		b2BodyDef boxObj;
+		boxObj.type = b2_dynamicBody;
+		boxObj.position = position;
+		b2Body* body = m_world->CreateBody(&boxObj);
+
+		b2PolygonShape box;
+
+		box.SetAsBox(height, width);
+		b2FixtureDef fd;
+		fd.shape = &box;
+		fd.isSensor = true;
+		targetAreaFd = body->CreateFixture(&fd);
+
 		return body;
 	}
 
@@ -98,7 +118,8 @@ public:
 		fd.density = density;
 		fd.restitution = 0.5f;
 
-		ballBody->CreateFixture(&fd);
+
+		fixturedef = ballBody->CreateFixture(&fd);
 	}
 
 	void CreateObstaculos(b2Vec2 position, b2Vec2 pontoIncical, b2Vec2 pontoFinal)
@@ -115,6 +136,21 @@ public:
 		b2FixtureDef fd;
 		fd.shape = &shape;
 		obstaculos->CreateFixture(&fd);
+	}
+
+	void BeginContact(b2Contact* contact) override
+	{
+		b2Fixture* fixtureA = contact->GetFixtureA();
+		b2Fixture* fixtureB = contact->GetFixtureB();
+
+
+		if (fixtureA == fixturedef || fixtureA == targetAreaFd)
+		{
+			if (fixtureB == fixturedef || fixtureB == targetAreaFd)
+			{
+				std::cout << "COLIDIU";
+			}
+		}
 	}
 
 	void Keyboard(int key) override
@@ -238,6 +274,11 @@ public:
 	b2Body* chao;
 	b2Body* parede1;
 	b2Body* teto;	
+
+	b2Fixture* fixturedef;
+	b2Fixture* targetAreaFd;
+
+	b2Body* targetArea;
 
 	b2DistanceJoint* m_joint;
 
