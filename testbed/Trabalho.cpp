@@ -117,6 +117,28 @@ public:
 		obstaculos->CreateFixture(&fd);
 	}
 
+	void Keyboard(int key) override
+	{
+		switch (key)
+		{
+			case GLFW_KEY_SPACE:
+			{
+				if (gameState == 0)
+				{
+					gameState = 1;
+				}
+				else if (gameState == 1)
+				{
+					b2Vec2 f = ballBody->GetWorldVector(b2Vec2(force, 0.0f));
+					b2Vec2 p = ballBody->GetWorldPoint(b2Vec2(0.0f, 5.0f));
+					ballBody->ApplyForce(f, p, true);
+
+					gameState = 2;
+				}
+			}
+		}
+	}
+
 	void Step(Settings& settings) override
 	{
 		//Chama o passo da simula��o e o algoritmo de rendering
@@ -126,18 +148,6 @@ public:
 		{
 			ballBody->SetTransform(ballBody->GetWorldCenter(), ballAngle);
 			ballAngle += 0.05;
-
-			if (glfwGetKey(g_mainWindow, GLFW_KEY_SPACE) == GLFW_PRESS)
-			{
-				if (gameState == 0)
-				{
-					gameState = 1;
-				}
-				if (gameState == 1)
-				{
-					gameState = 2;
-				}
-			}
 
 			if (glfwGetKey(g_mainWindow, GLFW_KEY_D) == GLFW_RELEASE)
 			{
@@ -159,23 +169,21 @@ public:
 				b2Vec2 v = ballBody->GetLinearVelocity();
 				ballBody->SetLinearVelocity(b2Vec2(20, v.y));
 			}
-
 		}
 		else if (gameState == 1)
 		{
-			if (glfwGetKey(g_mainWindow, GLFW_KEY_SPACE) == GLFW_PRESS)
+			if (force < 5000)
 			{
-				force += 10;
+				force += 15;
 			}
-			if (glfwGetKey(g_mainWindow, GLFW_KEY_SPACE) == GLFW_RELEASE)
+			else
 			{
-				b2Vec2 f = b2Vec2(ballBody->GetWorldVector(b2Vec2(0, force)));
-				ballBody->ApplyForceToCenter(f, true);
+				force = 1000;
 			}
 		}
 		else if (gameState == 2)
 		{
-			
+		
 		}
 		else if (gameState == 3)
 		{
@@ -235,7 +243,7 @@ public:
 	b2DistanceJoint* m_joint;
 
 	float rotation = 0;
-	float force = 0;
+	float force = 1000;
 };
 
 //Aqui fazemos o registro do novo teste 
