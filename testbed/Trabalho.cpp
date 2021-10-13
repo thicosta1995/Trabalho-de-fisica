@@ -1,6 +1,6 @@
 ﻿#include "test.h"
 #include <iostream>
-#include <list>
+#include <vector>
 #include <Windows.h>
 #include "imgui/imgui.h"
 
@@ -95,7 +95,7 @@ public:
 		fd.density = density;
 		fd.restitution = 0.5f;
 
-		circleObj->CreateFixture(&fd);
+		pinosfd.push_back(circleObj->CreateFixture(&fd));
 
 		pinos.push_back(circleObj);
 
@@ -136,6 +136,8 @@ public:
 		b2FixtureDef fd;
 		fd.shape = &shape;
 		obstaculos->CreateFixture(&fd);
+
+
 	}
 
 	void BeginContact(b2Contact* contact) override
@@ -143,12 +145,17 @@ public:
 		b2Fixture* fixtureA = contact->GetFixtureA();
 		b2Fixture* fixtureB = contact->GetFixtureB();
 
-
-		if (fixtureA == fixturedef || fixtureA == targetAreaFd)
+		for (int i = 0; i < pinosfd.size(); i++)
 		{
-			if (fixtureB == fixturedef || fixtureB == targetAreaFd)
+			if (fixtureA == pinosfd[i] || fixtureB == pinosfd[i])
 			{
-				std::cout << "COLIDIU";
+				if (fixtureA == targetAreaFd || fixtureB == targetAreaFd)
+				{
+					std::cout << "COLIDIU";
+					pinos.pop_back();
+					pinosfd.pop_back();
+					points++;
+				}
 			}
 		}
 	}
@@ -237,17 +244,22 @@ public:
 	void UpdateUI() override
 	{
 		ImGui::SetNextWindowPos(ImVec2(10.0f, 100.0f));
-		ImGui::SetNextWindowSize(ImVec2(260.0f, 90.0f));
+		ImGui::SetNextWindowSize(ImVec2(260.0f, 100.0f));
 		ImGui::Begin("Ball Informations", nullptr, ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoResize);
 
-		if (ImGui::SliderFloat("FORCE", &force, 0.0f, 20.0f, "%.0f"))
+		if (ImGui::SliderFloat("FORCE", &force, 1000, 5000, "%.0f"))
 		{
 			force = m_joint->SetLength(force);
 		}
 
-		if (ImGui::SliderFloat("ROTATION", &rotation, 0.0f, 10.0f, "%.1f"))
+		if (ImGui::SliderFloat("ROTATION", &rotation, 0, 0, "%.0f"))
 		{
 			rotation = m_joint->SetLength(rotation);
+		}
+
+		if (ImGui::SliderFloat("POINTS", &points, 0, 10, "%.0f"))
+		{
+			points = m_joint->SetLength(points);
 		}
 
 		ImGui::End();
@@ -263,7 +275,9 @@ public:
 	float gameState = 0; // 0 - Selecao de Rotação || 1 - Selecao de força || 2 - Aguardando finalizar rodada || 3 - Remontar mapa
 	float ballAngle = 0;
 
-	std::list<b2Body*> pinos;
+	std::vector<b2Body*> pinos;
+	std::vector<b2Fixture*> pinosfd;
+
 
 	time_t timer;
 	time_t startTimer;
@@ -284,6 +298,7 @@ public:
 
 	float rotation = 0;
 	float force = 1000;
+	float points = 0;
 };
 
 //Aqui fazemos o registro do novo teste 
