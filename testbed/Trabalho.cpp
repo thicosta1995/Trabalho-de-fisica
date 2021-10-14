@@ -369,12 +369,15 @@ public:
 					ClearMap();
 					level++;
 
+
 					if (level == 2)
 					{
+						points = 0;
 						CreateMap2();
 					}
 					else if (level == 3)
 					{
+						points = 0;
 						CreateMap3();
 					}
 					else
@@ -482,7 +485,7 @@ public:
 	float force = 1000;
 	float points = 0;
 	float balls = 10;
-	float plays = 3;
+	float plays;
 	float level = 1;
 };
 
