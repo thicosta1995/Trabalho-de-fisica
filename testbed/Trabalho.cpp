@@ -58,6 +58,12 @@ public:
 
 	void CreateMap()
 	{
+
+		for (int i = 0; i < pinoStatus.size(); i++)
+		{
+			pinoStatus[i] = false;
+		}
+
 		plays = 3;
 		ballBody->SetTransform(b2Vec2(-5.5, 2.0), 0);
 		ballBody->SetLinearVelocity(b2Vec2(0, 0));
@@ -76,6 +82,11 @@ public:
 
 	void CreateMap2()
 	{
+		for (int i = 0; i < pinoStatus.size(); i++)
+		{
+			pinoStatus[i] = false;
+		}
+
 		plays = 3;
 		ballBody->SetTransform(b2Vec2(-5.5, 2.0), 0);
 		ballBody->SetLinearVelocity(b2Vec2(0, 0));
@@ -100,6 +111,11 @@ public:
 
 	void CreateMap3()
 	{
+		for (int i = 0; i < pinoStatus.size(); i++)
+		{
+			pinoStatus[i] = false;
+		}
+
 		plays = 3;
 		ballBody->SetTransform(b2Vec2(-5.5, 2.0), 0);
 		ballBody->SetLinearVelocity(b2Vec2(0, 0));
@@ -399,7 +415,7 @@ public:
 		}
 
 		//show some text in the main screen
-		g_debugDraw.DrawString(5, m_textLine, "Este e' um template para os exercicios!! :)");
+		g_debugDraw.DrawString(5, m_textLine, "TRABALHO GRAU A :)");
 		m_textLine += 15;
 	}
 
