@@ -11,18 +11,12 @@ public:
 	Trabalho() {
 		//BOLA
 		CreateBall(1.0f, 1.0f, b2Vec2(-5.5, 2.0), 0);
+		CreatePins();
 		CreateMap();
 	}
 
-	void CreateMap()
+	void CreatePins()
 	{
-		//PAREDES
-		parede = CreateWall(b2Vec2(0.0f, 40.0f), -40, 0);
-		parede1 = CreateWall(b2Vec2(0.0f, 40.0f), 30, 0);
-		chao = CreateWall(b2Vec2(70.0f, 0.0f), -40, 0);
-
-		targetArea = CreateBox(-35, 5, b2Vec2(-5.0f, 45.0f));
-
 		//PINOS
 		//1 fila
 		CreateCircle(0.1, 1, b2Vec2(-10.0, 32.0), 0);
@@ -60,13 +54,74 @@ public:
 		pinoStatus.push_back(false);
 		pinoStatus.push_back(false);
 		pinoStatus.push_back(false);
-
-		//obstaculos
-		CreateObstaculos(b2Vec2(10, 20), b2Vec2(10, 12), b2Vec2(0.0, 0.0));
-		CreateObstaculos(b2Vec2(-15, 20), b2Vec2(-10, 12), b2Vec2(0.0, 0.0));
 	}
 
-	b2Body* CreateWall(b2Vec2 position, int x, int y)
+	void CreateMap()
+	{
+		plays = 3;
+		ballBody->SetTransform(b2Vec2(-5.5, 2.0), 0);
+		ballBody->SetLinearVelocity(b2Vec2(0, 0));
+		ballBody->SetAngularVelocity(0);
+		//PAREDES
+		CreateWall(b2Vec2(0.0f, 40.0f), -40, 0, 1);
+		CreateWall(b2Vec2(0.0f, 40.0f), 30, 0, 1);
+		CreateWall(b2Vec2(70.0f, 0.0f), -40, 0, 1);
+
+		targetArea = CreateBox(-35, 5, b2Vec2(-5.0f, 45.0f));
+
+		//obstaculos
+		CreateObstaculos(b2Vec2(10, 20), b2Vec2(10, 12), b2Vec2(0.0, 0.0), 1);
+		CreateObstaculos(b2Vec2(-15, 20), b2Vec2(-10, 12), b2Vec2(0.0, 0.0), 1);
+	}
+
+	void CreateMap2()
+	{
+		plays = 3;
+		ballBody->SetTransform(b2Vec2(-5.5, 2.0), 0);
+		ballBody->SetLinearVelocity(b2Vec2(0, 0));
+		ballBody->SetAngularVelocity(0);
+		//PAREDES
+		CreateWall(b2Vec2(0.0f, 10.0f), -40, 0, 1);
+		CreateWall(b2Vec2(0.0f, 10.0f), -40, 20, 1);
+
+		CreateWall(b2Vec2(0.0f, 10.0f), 30, 0, 1);
+		CreateWall(b2Vec2(0.0f, 10.0f), 30, 20, 1);
+
+		CreateWall(b2Vec2(70.0f, 0.0f), -40, 0, 1);
+
+		targetArea = CreateBox(-35, 5, b2Vec2(-5.0f, 45.0f));
+
+		//obstaculos
+		CreateObstaculos(b2Vec2(0, 20), b2Vec2(15, 0), b2Vec2(0.0, 0.0), 1);
+		CreateObstaculos(b2Vec2(-25, 20), b2Vec2(15, 0), b2Vec2(0.0, 0.0), 1);
+
+		//CreateObstaculos(b2Vec2(-15, 20), b2Vec2(-10, 12), b2Vec2(0.0, 0.0));
+	}
+
+	void CreateMap3()
+	{
+		plays = 3;
+		ballBody->SetTransform(b2Vec2(-5.5, 2.0), 0);
+		ballBody->SetLinearVelocity(b2Vec2(0, 0));
+		ballBody->SetAngularVelocity(0);
+		//PAREDES
+		CreateWall(b2Vec2(0.0f, 40.0f), -40, 0, 1);
+		CreateWall(b2Vec2(0.0f, 40.0f), 30, 0, 1);
+		CreateWall(b2Vec2(70.0f, 0.0f), -40, 0, 1);
+
+		targetArea = CreateBox(-35, 5, b2Vec2(-5.0f, 45.0f));
+
+		//obstaculos
+		CreateObstaculos(b2Vec2(-10, 39.5f), b2Vec2(10, 0), b2Vec2(0.0, 0.0), 1);
+		CreateObstaculos(b2Vec2(-30, 39.5f), b2Vec2(10, 0), b2Vec2(0.0, 0.0), 1);
+		CreateObstaculos(b2Vec2(10, 39.5f), b2Vec2(10, 0), b2Vec2(0.0, 0.0), 1);
+
+		CreateObstaculos(b2Vec2(10, 10), b2Vec2(0, 0), b2Vec2(0.0, 15.0), 2);
+		CreateObstaculos(b2Vec2(-20, 10), b2Vec2(0, 0), b2Vec2(0.0, 15.0), 2);
+	}
+
+
+	b2Body* CreateWall(b2Vec2 position, int x, int y, int restitution)
 	{
 		b2Body* body;
 		b2BodyDef bd;
@@ -78,6 +133,9 @@ public:
 
 		b2FixtureDef fd;
 		fd.shape = &shape;
+		fd.restitution = restitution;
+		walls.push_back(body);
+
 		body->CreateFixture(&fd);
 		return body;
 	}
@@ -146,7 +204,7 @@ public:
 		fixturedef = ballBody->CreateFixture(&fd);
 	}
 
-	void CreateObstaculos(b2Vec2 position, b2Vec2 pontoIncical, b2Vec2 pontoFinal)
+	void CreateObstaculos(b2Vec2 position, b2Vec2 pontoIncical, b2Vec2 pontoFinal, int restitution)
 	{
 		b2Body* obstaculos;
 		b2BodyDef bf;
@@ -156,10 +214,34 @@ public:
 		b2EdgeShape shape;
 		shape.SetTwoSided(pontoIncical,pontoFinal);
 
-
 		b2FixtureDef fd;
 		fd.shape = &shape;
+		fd.restitution = restitution;
+		obstacles.push_back(obstaculos);
 		obstaculos->CreateFixture(&fd);
+	}
+
+	void ClearMap()
+	{
+		for (int i = 0; i < walls.size(); i++)
+		{
+			m_world->DestroyBody(walls[i]);
+		}
+
+		for (int i = 0; i < obstacles.size(); i++)
+		{
+			m_world->DestroyBody(obstacles[i]);
+		}
+
+		walls.clear();
+		obstacles.clear();
+
+		for (int i = 0; i < pinos.size(); i++)
+		{
+			pinos[i]->SetTransform(pinosPos[i], 0);
+			pinos[i]->SetLinearVelocity(b2Vec2(0, 0));
+			pinos[i]->SetAngularVelocity(0);
+		}
 	}
 
 	void BeginContact(b2Contact* contact) override
@@ -179,11 +261,6 @@ public:
 
 					
 					points++;
-
-					if (points == 10)
-					{
-						//FIM DE FASE
-					}
 				}
 			}
 		}
@@ -204,11 +281,20 @@ public:
 					b2Vec2 f = ballBody->GetWorldVector(b2Vec2(force, 0.0f));
 					b2Vec2 p = ballBody->GetWorldPoint(b2Vec2(0.0f, 5.0f));
 					ballBody->ApplyForce(f, p, true);
-
+					force = 1000;
 					gameState = 2;
 				}
 			}
 		}
+	}
+
+	void ResetGame()
+	{
+		ClearMap();
+		CreateMap();
+		level = 1;
+		points = 0;
+		gameState = 0;
 	}
 
 	void Step(Settings& settings) override
@@ -246,7 +332,7 @@ public:
 		{
 			if (force < 5000)
 			{
-				force += 15;
+				force += 40;
 			}
 			else
 			{
@@ -260,6 +346,32 @@ public:
 			if (timer == 500)
 			{
 				gameState = 3;
+				timer = 0;
+
+				if (points == 10)
+				{
+					ClearMap();
+					level++;
+
+					if (level == 2)
+					{
+						CreateMap2();
+					}
+					else if (level == 3)
+					{
+						CreateMap3();
+					}
+					else
+					{
+						ResetGame();
+					}
+
+					gameState = 0;
+				}
+				else if (plays == 0)
+				{
+					ResetGame();
+				}
 			}
 		}
 		else if (gameState == 3)
@@ -278,14 +390,11 @@ public:
 			ballBody->SetLinearVelocity(b2Vec2(0, 0));
 			ballBody->SetAngularVelocity(0);
 			
-			if (plays > 1)
+			if (plays > 0)
 			{
 				plays--;
 			}
-			else
-			{
-				//GAME OVER
-			}
+			
 			gameState = 0;
 		}
 
@@ -298,17 +407,12 @@ public:
 	void UpdateUI() override
 	{
 		ImGui::SetNextWindowPos(ImVec2(10.0f, 100.0f));
-		ImGui::SetNextWindowSize(ImVec2(260.0f, 120.0f));
-		ImGui::Begin("Ball Informations", nullptr, ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoResize);
+		ImGui::SetNextWindowSize(ImVec2(260.0f, 130.0f));
+		ImGui::Begin("Game Informations", nullptr, ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoResize);
 
 		if (ImGui::SliderFloat("FORCE", &force, 1000, 5000, "%.0f"))
 		{
 			force = m_joint->SetLength(force);
-		}
-
-		if (ImGui::SliderFloat("ROTATION", &rotation, 0, 0, "%.0f"))
-		{
-			rotation = m_joint->SetLength(rotation);
 		}
 
 		if (ImGui::SliderFloat("POINTS", &points, 0, 10, "%.0f"))
@@ -319,6 +423,11 @@ public:
 		if (ImGui::SliderFloat("PLAYS", &plays, 1, 3, "%.0f"))
 		{
 			plays = m_joint->SetLength(plays);
+		}
+
+		if (ImGui::SliderFloat("LEVEL", &level, 1, 3, "%.0f"))
+		{
+			level = m_joint->SetLength(level);
 		}
 
 		ImGui::End();
@@ -343,10 +452,8 @@ public:
 
 	b2BodyDef ballBodyDef;
 	b2Body* ballBody; 
-	b2Body* parede;
-	b2Body* chao;
-	b2Body* parede1;
-	b2Body* teto;	
+	std::vector<b2Body*> walls;
+	std::vector<b2Body*> obstacles;
 
 	b2Fixture* fixturedef;
 	b2Fixture* targetAreaFd;
@@ -360,6 +467,7 @@ public:
 	float points = 0;
 	float balls = 10;
 	float plays = 3;
+	float level = 1;
 };
 
 //Aqui fazemos o registro do novo teste 
